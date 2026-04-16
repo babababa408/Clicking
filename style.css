@@ -2,19 +2,19 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:        #0d0f1a;
-  --bg2:       #141726;
-  --bg3:       #1c2035;
-  --border:    #2a2f4a;
-  --text:      #e0e4f5;
-  --text-dim:  #7880a0;
+  --bg:        #100d18;
+  --bg2:       #18122a;
+  --bg3:       #1f1638;
+  --border:    #2e2450;
+  --text:      #e8e0f5;
+  --text-dim:  #7868a8;
   --coin:      #f5c842;
-  --gem:       #5bc8f5;
-  --prestige:  #c084fc;
+  --gem:       #a78bfa;
+  --prestige:  #fb923c;
   --green:     #4ade80;
   --red:       #f87171;
   --radius:    10px;
-  --shadow:    0 4px 20px rgba(0,0,0,0.5);
+  --shadow:    0 4px 20px rgba(0,0,0,0.6);
 }
 
 html, body {
@@ -94,7 +94,7 @@ html, body {
   overflow: hidden;
 }
 
-/* ─── Click Zone ───────────────────────────────────────────────────── */
+/* ─── Invoke Zone ──────────────────────────────────────────────────── */
 #click-zone {
   width: 300px;
   flex-shrink: 0;
@@ -102,11 +102,21 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 18px;
   padding: 24px 16px;
   border-right: 1px solid var(--border);
   position: relative;
   overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, rgba(109,40,217,0.08) 0%, transparent 70%);
+}
+
+#game-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gem);
+  opacity: 0.7;
 }
 
 #total-clicks-wrap {
@@ -122,19 +132,22 @@ html, body {
 
 #rebirth-threshold-label { color: var(--prestige); }
 
-/* Main click button */
+/* Invoke button — styled as a glowing ritual sigil */
 #main-btn {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #3b5bdb, #1a1f6e);
-  border: 3px solid #4a6ee0;
-  color: #fff;
-  font-size: 1.1rem;
+  background: radial-gradient(circle at 35% 35%, #6d28d9, #2e1065);
+  border: 3px solid #7c3aed;
+  color: #e8d5ff;
+  font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   cursor: pointer;
-  box-shadow: 0 0 30px rgba(74, 110, 224, 0.4), var(--shadow);
+  box-shadow:
+    0 0 30px rgba(124, 58, 237, 0.45),
+    0 0 60px rgba(124, 58, 237, 0.15),
+    var(--shadow);
   transition: transform 0.07s, box-shadow 0.07s;
   position: relative;
   overflow: visible;
@@ -142,12 +155,15 @@ html, body {
 }
 
 #main-btn:hover {
-  box-shadow: 0 0 45px rgba(74, 110, 224, 0.65), var(--shadow);
+  box-shadow:
+    0 0 50px rgba(124, 58, 237, 0.7),
+    0 0 90px rgba(124, 58, 237, 0.25),
+    var(--shadow);
 }
 
 #main-btn:active {
-  transform: scale(0.92);
-  box-shadow: 0 0 20px rgba(74, 110, 224, 0.3);
+  transform: scale(0.91);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
 }
 
 #click-stats {
@@ -177,8 +193,8 @@ html, body {
   white-space: nowrap;
 }
 
-.float-text.coin   { color: var(--coin); }
-.float-text.gem    { color: var(--gem); font-size: 1.15rem; }
+.float-text.coin { color: var(--coin); }
+.float-text.gem  { color: var(--gem); font-size: 1.15rem; }
 
 @keyframes floatUp {
   0%   { opacity: 1;   transform: translateY(0) scale(1); }
@@ -217,10 +233,10 @@ html, body {
 
 .tab-btn:hover { background: var(--bg3); color: var(--text); }
 
-.tab-btn.active          { color: var(--text); }
-.tab-btn[data-tab="coin-tab"].active     { border-color: var(--coin); color: var(--coin); }
-.tab-btn[data-tab="gem-tab"].active      { border-color: var(--gem); color: var(--gem); }
-.tab-btn[data-tab="prestige-tab"].active { border-color: var(--prestige); color: var(--prestige); }
+.tab-btn.active                              { color: var(--text); }
+.tab-btn[data-tab="coin-tab"].active         { border-color: var(--coin);     color: var(--coin); }
+.tab-btn[data-tab="gem-tab"].active          { border-color: var(--gem);      color: var(--gem); }
+.tab-btn[data-tab="prestige-tab"].active     { border-color: var(--prestige); color: var(--prestige); }
 
 /* ─── Tab Panels ───────────────────────────────────────────────────── */
 .tab-panel {
@@ -271,11 +287,9 @@ html, body {
   transition: border-color 0.15s, opacity 0.15s;
 }
 
-.upgrade-card.affordable { border-color: #3a4a80; }
-
 .upgrade-card.coin-card.affordable     { border-color: #8a7020; }
-.upgrade-card.gem-card.affordable      { border-color: #1e6a8a; }
-.upgrade-card.prestige-card.affordable { border-color: #7040a0; }
+.upgrade-card.gem-card.affordable      { border-color: #5b3fb5; }
+.upgrade-card.prestige-card.affordable { border-color: #b05a1a; }
 
 .upgrade-card.maxed { opacity: 0.45; }
 
@@ -321,11 +335,11 @@ html, body {
 .buy-btn:active:not(:disabled) { transform: scale(0.95); }
 .buy-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.coin-btn     { background: var(--coin);    color: #1a1400; }
-.gem-btn      { background: var(--gem);     color: #001a22; }
-.prestige-btn { background: var(--prestige); color: #1a0028; }
+.coin-btn     { background: var(--coin);     color: #1a1400; }
+.gem-btn      { background: var(--gem);      color: #0d0820; }
+.prestige-btn { background: var(--prestige); color: #1a0800; }
 
-/* ─── Rebirth Section ──────────────────────────────────────────────── */
+/* ─── Ascension Section ────────────────────────────────────────────── */
 #rebirth-section {
   padding: 16px 20px 20px;
   border-top: 1px solid var(--border);
@@ -362,7 +376,7 @@ html, body {
 
 #rebirth-btn:not(:disabled):hover {
   background: var(--prestige);
-  color: #1a0028;
+  color: #1a0800;
 }
 
 #rebirth-btn:disabled {

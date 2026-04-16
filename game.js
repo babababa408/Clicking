@@ -1,9 +1,9 @@
 /* ══════════════════════════════════════════════════════════════════
-   CLICKER GAME  —  game.js
+   MYTHIC IDLE — Tales of the Ancients
    Currencies:
-     coins    – base, earned every click + auto-clickers
-     gems     – rare, RNG drop on click
-     tokens   – prestige, earned only via rebirth
+     coins    – Gold          — earned every invocation + passive creatures
+     gems     – Mystic Runes  — rare, RNG manifest on invocation
+     tokens   – Divine Favor  — granted only through Ascension
    ══════════════════════════════════════════════════════════════════ */
 
 // ─── State ─────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ const state = {
   gems:    0,
   tokens:  0,
 
-  totalClicks:   0,   // lifetime clicks this run (resets on rebirth)
+  totalClicks:   0,   // invocations this cycle (resets on Ascension)
   allTimeClicks: 0,   // never resets
   rebirths:      0,
 
@@ -24,21 +24,23 @@ const state = {
   lastTick: Date.now(),
 };
 
-// ─── Rebirth threshold ──────────────────────────────────────────────
-// Base 10,000 clicks; each rebirth multiplies the requirement by 1.5.
-// Prestige upgrade "Eternal Grind" reduces the base before scaling.
+// ─── Ascension threshold ─────────────────────────────────────────────
+// Base 10,000 invocations; scales ×1.5 with each Ascension.
+// "Titan's Will" prestige upgrade reduces the base before scaling.
 const REBIRTH_CLICKS = 10000;
 
 // ─── Upgrade Definitions ────────────────────────────────────────────
 // Each upgrade: { id, name, icon, desc, maxLevel, baseCost, costMult,
 //                 effect(level) → applied to state,
 //                 currency: 'coins' | 'gems' | 'tokens' }
+
+// ── Gold Rites (spend Gold) ─────────────────────────────────────────
 const COIN_UPGRADES = [
   {
     id: 'stronger_click',
-    name: 'Stronger Click',
-    icon: '👆',
-    desc: 'Each click gives +2 more Coins.',
+    name: "Ogre's Might",
+    icon: '👹',
+    desc: "Channel the Ogre's brute strength. +2 Gold per invocation.",
     maxLevel: 50,
     baseCost: 10,
     costMult: 1.6,
@@ -47,9 +49,9 @@ const COIN_UPGRADES = [
   },
   {
     id: 'coin_magnet',
-    name: 'Coin Magnet',
-    icon: '🧲',
-    desc: 'Multiplies coins per click by ×1.25.',
+    name: "Leprechaun's Greed",
+    icon: '🍀',
+    desc: 'The cunning Leprechaun multiplies your golden haul. ×1.25 Gold per invocation.',
     maxLevel: 20,
     baseCost: 100,
     costMult: 2.2,
@@ -58,9 +60,9 @@ const COIN_UPGRADES = [
   },
   {
     id: 'auto_clicker',
-    name: 'Auto-Clicker',
-    icon: '🤖',
-    desc: '+1 Coin/s automatic income.',
+    name: 'Brownie Servant',
+    icon: '🧝',
+    desc: 'A tireless Brownie toils unseen in your halls. +1 Gold/s.',
     maxLevel: 30,
     baseCost: 50,
     costMult: 1.8,
@@ -69,9 +71,9 @@ const COIN_UPGRADES = [
   },
   {
     id: 'coin_factory',
-    name: 'Coin Factory',
-    icon: '🏭',
-    desc: '+5 Coins/s automatic income.',
+    name: "Dragon's Hoard",
+    icon: '🐉',
+    desc: 'An ancient Dragon amasses wealth without rest. +5 Gold/s.',
     maxLevel: 20,
     baseCost: 500,
     costMult: 2.0,
@@ -80,9 +82,9 @@ const COIN_UPGRADES = [
   },
   {
     id: 'golden_fingers',
-    name: 'Golden Fingers',
-    icon: '✨',
-    desc: '+10 Coins/s and +5 Coins per click.',
+    name: 'Midas Touch',
+    icon: '👑',
+    desc: "King Midas' curse becomes your greatest blessing. +10 Gold/s and +5 Gold per invocation.",
     maxLevel: 15,
     baseCost: 2500,
     costMult: 2.5,
@@ -91,9 +93,9 @@ const COIN_UPGRADES = [
   },
   {
     id: 'coin_surge',
-    name: 'Coin Surge',
+    name: "Odin's Fury",
     icon: '⚡',
-    desc: 'Multiplies all Coin income by ×1.5.',
+    desc: "The Allfather's wrath surges through all your coffers. All Gold income ×1.5.",
     maxLevel: 10,
     baseCost: 10000,
     costMult: 3.5,
@@ -105,12 +107,13 @@ const COIN_UPGRADES = [
   },
 ];
 
+// ── Runic Secrets (spend Mystic Runes) ─────────────────────────────
 const GEM_UPGRADES = [
   {
     id: 'lucky_strike',
-    name: 'Lucky Strike',
-    icon: '🍀',
-    desc: '+2% Gem drop chance per level.',
+    name: 'Fairy Blessing',
+    icon: '🧚',
+    desc: 'The fair folk bless each invocation with mystic runes. +2% Rune manifest chance.',
     maxLevel: 20,
     baseCost: 3,
     costMult: 1.7,
@@ -119,9 +122,9 @@ const GEM_UPGRADES = [
   },
   {
     id: 'gem_doubler',
-    name: 'Gem Doubler',
-    icon: '💫',
-    desc: 'Gems dropped are ×2 per purchase.',
+    name: "Djinn's Bounty",
+    icon: '🌀',
+    desc: 'A wish-granting Djinn doubles your rune rewards. Runes manifest ×2.',
     maxLevel: 5,
     baseCost: 10,
     costMult: 3.0,
@@ -130,9 +133,9 @@ const GEM_UPGRADES = [
   },
   {
     id: 'gem_insight',
-    name: 'Gem Insight',
-    icon: '🔮',
-    desc: '+5 Coins per click for every Gem you own.',
+    name: "Oracle's Vision",
+    icon: '👁️',
+    desc: "The Oracle's sight links your Runes to Gold power. +5 Gold per invocation per Rune owned.",
     maxLevel: 1,
     baseCost: 5,
     costMult: 1,
@@ -141,9 +144,9 @@ const GEM_UPGRADES = [
   },
   {
     id: 'crystal_core',
-    name: 'Crystal Core',
-    icon: '🪨',
-    desc: '+10% Gem drop chance and +10 Coins/s.',
+    name: 'Phoenix Feather',
+    icon: '🔥',
+    desc: "A sacred Phoenix Feather amplifies mystic power. +10% Rune chance, +10 Gold/s.",
     maxLevel: 10,
     baseCost: 25,
     costMult: 2.2,
@@ -155,9 +158,9 @@ const GEM_UPGRADES = [
   },
   {
     id: 'prism_aura',
-    name: 'Prism Aura',
+    name: "Dragon's Iris",
     icon: '🌈',
-    desc: 'Multiplies all income by ×2 permanently.',
+    desc: "Gaze into the Dragon's prismatic eye and double all power. All income ×2.",
     maxLevel: 5,
     baseCost: 100,
     costMult: 4.0,
@@ -169,12 +172,13 @@ const GEM_UPGRADES = [
   },
 ];
 
+// ── Divine Blessings (spend Divine Favor) ──────────────────────────
 const PRESTIGE_UPGRADES = [
   {
     id: 'prestige_boost',
-    name: 'Prestige Boost',
-    icon: '🚀',
-    desc: 'Start each rebirth with ×1.5 Coins per click.',
+    name: 'Olympian Blood',
+    icon: '🏛️',
+    desc: 'Ichor of the gods flows through you. Start each Ascension with ×1.5 Gold per invocation.',
     maxLevel: 10,
     baseCost: 1,
     costMult: 2.0,
@@ -183,9 +187,9 @@ const PRESTIGE_UPGRADES = [
   },
   {
     id: 'gem_head_start',
-    name: 'Gem Head Start',
-    icon: '💎',
-    desc: 'Start each rebirth with +3% Gem drop chance.',
+    name: 'Fae Blessing',
+    icon: '🍄',
+    desc: 'The Fae whisper ancient luck at each rebirth. +3% Rune manifest chance on Ascension start.',
     maxLevel: 10,
     baseCost: 1,
     costMult: 1.8,
@@ -194,9 +198,9 @@ const PRESTIGE_UPGRADES = [
   },
   {
     id: 'token_tithe',
-    name: 'Token Tithe',
-    icon: '⭐',
-    desc: 'Earn +1 extra Prestige Token per rebirth.',
+    name: 'Celestial Tribute',
+    icon: '🌟',
+    desc: 'Greater sacrifices yield more Divine Favor per Ascension. +1 extra Divine Favor per Ascension.',
     maxLevel: 5,
     baseCost: 3,
     costMult: 2.5,
@@ -205,9 +209,9 @@ const PRESTIGE_UPGRADES = [
   },
   {
     id: 'eternal_grind',
-    name: 'Eternal Grind',
-    icon: '♾️',
-    desc: 'Reduce the base rebirth click requirement by 1,000.',
+    name: "Titan's Will",
+    icon: '🗿',
+    desc: "The endurance of the Titans eases your Ascension burden. Reduce Ascension base by 1,000 invocations.",
     maxLevel: 8,
     baseCost: 2,
     costMult: 2.0,
@@ -216,9 +220,9 @@ const PRESTIGE_UPGRADES = [
   },
   {
     id: 'legacy_coins',
-    name: 'Legacy Coins',
-    icon: '🏆',
-    desc: 'Keep 10% of Coins through rebirths.',
+    name: "Wyrm's Legacy",
+    icon: '🐲',
+    desc: 'An ancient Wyrm preserves a portion of your Gold across Ascensions. Keep 10% of Gold.',
     maxLevel: 5,
     baseCost: 5,
     costMult: 3.0,
@@ -256,7 +260,7 @@ function rebirthThreshold() {
 }
 
 // ─── Recalculate derived stats from scratch ───────────────────────────
-// Called after rebirth; upgrade effects re-apply from stored levels.
+// Called after Ascension; upgrade effects re-apply from stored levels.
 function recalcStats() {
   state.coinsPerClick = 1;
   state.coinsPerSec   = 0;
@@ -264,7 +268,7 @@ function recalcStats() {
   delete state._gemMultiplier;
   delete state._gemCoinSync;
 
-  // Apply prestige bonuses first (they're permanent)
+  // Apply prestige bonuses first (permanent across Ascensions)
   if (state._prestigeClickMult) {
     state.coinsPerClick = Math.floor(state.coinsPerClick * state._prestigeClickMult);
   }
@@ -272,19 +276,19 @@ function recalcStats() {
     state.gemDropChance = Math.min(state.gemDropChance + state._prestigeGemBonus, 0.80);
   }
 
-  // Re-apply coin upgrades
+  // Re-apply Gold Rite upgrades
   for (const u of COIN_UPGRADES) {
     const lvl = upgradeLevels[u.id];
     for (let i = 0; i < lvl; i++) u.effect(i + 1);
   }
 
-  // Re-apply gem upgrades
+  // Re-apply Runic Secret upgrades
   for (const u of GEM_UPGRADES) {
     const lvl = upgradeLevels[u.id];
     for (let i = 0; i < lvl; i++) u.effect(i + 1);
   }
 
-  // Gem-coin sync bonus
+  // Oracle's Vision: dynamic bonus based on current rune count
   if (state._gemCoinSync) {
     state.coinsPerClick += Math.floor(state.gems * 5);
   }
@@ -293,47 +297,47 @@ function recalcStats() {
 // ─── DOM references ───────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
 
-const elCoinCount   = $('coin-count');
-const elGemCount    = $('gem-count');
-const elTokenCount  = $('token-count');
-const elCoinRate    = $('coin-rate');
-const elGemChance   = $('gem-chance');
-const elRebirthStatus = $('rebirth-status');
-const elTotalClicks = $('total-clicks');
-const elStatCPC     = $('stat-cpc');
-const elStatGDC     = $('stat-gdc');
-const elStatRebirths = $('stat-rebirths');
-const elFloats      = $('float-container');
-const elMainBtn     = $('main-btn');
-const elRebirthBtn  = $('rebirth-btn');
+const elCoinCount         = $('coin-count');
+const elGemCount          = $('gem-count');
+const elTokenCount        = $('token-count');
+const elCoinRate          = $('coin-rate');
+const elGemChance         = $('gem-chance');
+const elRebirthStatus     = $('rebirth-status');
+const elTotalClicks       = $('total-clicks');
+const elStatCPC           = $('stat-cpc');
+const elStatGDC           = $('stat-gdc');
+const elStatRebirths      = $('stat-rebirths');
+const elFloats            = $('float-container');
+const elMainBtn           = $('main-btn');
+const elRebirthBtn        = $('rebirth-btn');
 const elRebirthThreshLabel = $('rebirth-threshold-label');
-const elRebirthReward = $('rebirth-reward-preview');
+const elRebirthReward     = $('rebirth-reward-preview');
 
 // ─── Render HUD & stats ───────────────────────────────────────────────
 function renderHUD() {
-  elCoinCount.textContent  = fmt(state.coins);
-  elGemCount.textContent   = fmt(state.gems);
-  elTokenCount.textContent = fmt(state.tokens);
-  elCoinRate.textContent   = '+' + fmt(state.coinsPerSec) + '/s';
-  elGemChance.textContent  = 'Drop: ' + pct(state.gemDropChance);
+  elCoinCount.textContent   = fmt(state.coins);
+  elGemCount.textContent    = fmt(state.gems);
+  elTokenCount.textContent  = fmt(state.tokens);
+  elCoinRate.textContent    = '+' + fmt(state.coinsPerSec) + '/s';
+  elGemChance.textContent   = 'Manifest: ' + pct(state.gemDropChance);
   elTotalClicks.textContent = fmt(state.totalClicks);
   elStatCPC.textContent     = fmt(state.coinsPerClick);
   elStatGDC.textContent     = pct(state.gemDropChance);
   elStatRebirths.textContent = state.rebirths;
 
   const threshold = rebirthThreshold();
-  elRebirthThreshLabel.textContent = ' / ' + fmt(threshold) + ' for rebirth';
+  elRebirthThreshLabel.textContent = ' / ' + fmt(threshold) + ' for Ascension';
 
-  const tokensOnRebirth = 1 + Math.floor(state.rebirths / 2) + (state._bonusTokens || 0);
+  const favorOnAscend = 1 + Math.floor(state.rebirths / 2) + (state._bonusTokens || 0);
   elRebirthReward.textContent =
-    'You will earn ' + tokensOnRebirth + ' Prestige Token(s) on rebirth.';
+    'You will receive ' + favorOnAscend + ' Divine Favor upon Ascending.';
 
-  const canRebirth = state.totalClicks >= threshold;
-  elRebirthBtn.disabled = !canRebirth;
-  elRebirthBtn.textContent = canRebirth
-    ? '♻️ Rebirth! (' + fmt(threshold) + ' clicks reached)'
-    : '♻️ Rebirth (need ' + fmt(threshold) + ' total clicks)';
-  elRebirthStatus.textContent = canRebirth ? 'Ready!' : 'Rebirth: locked';
+  const canAscend = state.totalClicks >= threshold;
+  elRebirthBtn.disabled = !canAscend;
+  elRebirthBtn.textContent = canAscend
+    ? '🌅 Ascend! (' + fmt(threshold) + ' invocations reached)'
+    : '🌅 Ascend (need ' + fmt(threshold) + ' invocations)';
+  elRebirthStatus.textContent = canAscend ? 'Ready to Ascend!' : 'Ascension: locked';
 }
 
 // ─── Render upgrade list ─────────────────────────────────────────────
@@ -342,12 +346,12 @@ function renderUpgradeList(upgrades, containerId, cssClass, btnClass) {
   container.innerHTML = '';
 
   for (const u of upgrades) {
-    const lvl     = upgradeLevels[u.id];
-    const maxed   = lvl >= u.maxLevel;
-    const cost    = getCost(u);
-    const balance = u.currency === 'coins' ? state.coins
-                  : u.currency === 'gems'  ? state.gems
-                  :                          state.tokens;
+    const lvl      = upgradeLevels[u.id];
+    const maxed    = lvl >= u.maxLevel;
+    const cost     = getCost(u);
+    const balance  = u.currency === 'coins' ? state.coins
+                   : u.currency === 'gems'  ? state.gems
+                   :                          state.tokens;
     const canAfford = !maxed && balance >= cost;
 
     const card = document.createElement('div');
@@ -360,12 +364,12 @@ function renderUpgradeList(upgrades, containerId, cssClass, btnClass) {
         <div class="upgrade-name">${u.name}</div>
         <div class="upgrade-desc">${u.desc}</div>
         <div class="upgrade-level">
-          Level <span>${lvl}</span> / ${u.maxLevel}
+          Rank <span>${lvl}</span> / ${u.maxLevel}
         </div>
       </div>
       <button class="buy-btn ${btnClass}" ${maxed || !canAfford ? 'disabled' : ''}
               data-id="${u.id}">
-        ${maxed ? 'MAX' : fmt(cost) + ' ' + currencyIcon(u.currency)}
+        ${maxed ? 'MASTERED' : fmt(cost) + ' ' + currencyIcon(u.currency)}
       </button>
     `;
 
@@ -374,7 +378,7 @@ function renderUpgradeList(upgrades, containerId, cssClass, btnClass) {
 }
 
 function currencyIcon(c) {
-  return c === 'coins' ? '🪙' : c === 'gems' ? '💎' : '⭐';
+  return c === 'coins' ? '🪙' : c === 'gems' ? '🔮' : '✨';
 }
 
 function renderAllUpgrades() {
@@ -397,7 +401,6 @@ function buyUpgrade(upgradeId) {
   if (u.currency === 'gems'   && state.gems   < cost) return;
   if (u.currency === 'tokens' && state.tokens < cost) return;
 
-  // Deduct cost
   if (u.currency === 'coins')  state.coins  -= cost;
   if (u.currency === 'gems')   state.gems   -= cost;
   if (u.currency === 'tokens') state.tokens -= cost;
@@ -405,10 +408,8 @@ function buyUpgrade(upgradeId) {
   upgradeLevels[u.id]++;
   u.effect(upgradeLevels[u.id]);
 
-  // Gem-coin sync recalc (dynamic based on gem count)
-  if (state._gemCoinSync) {
-    recalcStats();
-  }
+  // Oracle's Vision is dynamic — recalc when rune count changes
+  if (state._gemCoinSync) recalcStats();
 
   renderAllUpgrades();
   renderHUD();
@@ -425,28 +426,25 @@ function spawnFloat(text, type, x, y) {
   el.addEventListener('animationend', () => el.remove());
 }
 
-// ─── Click handler ────────────────────────────────────────────────────
-elMainBtn.addEventListener('click', (e) => {
+// ─── Invocation handler ───────────────────────────────────────────────
+elMainBtn.addEventListener('click', () => {
   state.coins += state.coinsPerClick;
   state.totalClicks++;
   state.allTimeClicks++;
 
-  // Float for coins
-  const rect   = elMainBtn.getBoundingClientRect();
+  const rect     = elMainBtn.getBoundingClientRect();
   const zoneRect = elFloats.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2  - zoneRect.left + (Math.random() * 40 - 20);
+  const cx = rect.left + rect.width  / 2 - zoneRect.left + (Math.random() * 40 - 20);
   const cy = rect.top  + rect.height / 2 - zoneRect.top  - 10;
 
   spawnFloat('+' + fmt(state.coinsPerClick) + ' 🪙', 'coin', cx, cy);
 
-  // RNG gem drop
-  const roll = Math.random();
-  if (roll < state.gemDropChance) {
-    const gemAmount = state._gemMultiplier || 1;
-    state.gems += gemAmount;
-    spawnFloat('+' + gemAmount + ' 💎', 'gem', cx - 15, cy - 30);
+  // RNG Rune manifest
+  if (Math.random() < state.gemDropChance) {
+    const runeAmount = state._gemMultiplier || 1;
+    state.gems += runeAmount;
+    spawnFloat('+' + runeAmount + ' 🔮', 'gem', cx - 15, cy - 30);
 
-    // Gem-coin sync is dynamic — recalc
     if (state._gemCoinSync) recalcStats();
   }
 
@@ -454,34 +452,34 @@ elMainBtn.addEventListener('click', (e) => {
   renderAllUpgrades();
 });
 
-// ─── Rebirth ──────────────────────────────────────────────────────────
+// ─── Ascension ───────────────────────────────────────────────────────
 elRebirthBtn.addEventListener('click', () => {
   const threshold = rebirthThreshold();
   if (state.totalClicks < threshold) return;
 
-  const tokensEarned = 1 + Math.floor(state.rebirths / 2) + (state._bonusTokens || 0);
-  const legacyCoins  = Math.floor(state.coins * (state._legacyCoinPct || 0));
+  const favorEarned = 1 + Math.floor(state.rebirths / 2) + (state._bonusTokens || 0);
+  const legacyGold  = Math.floor(state.coins * (state._legacyCoinPct || 0));
 
   state.rebirths++;
-  state.tokens += tokensEarned;
+  state.tokens += favorEarned;
 
-  // Reset run currencies
-  state.coins       = legacyCoins;
+  // Reset cycle currencies
+  state.coins       = legacyGold;
   state.gems        = 0;
   state.totalClicks = 0;
 
-  // Reset coin & gem upgrade levels (prestige levels persist)
+  // Reset Gold Rite and Runic Secret levels (Divine Blessings persist)
   for (const u of COIN_UPGRADES) upgradeLevels[u.id] = 0;
   for (const u of GEM_UPGRADES)  upgradeLevels[u.id] = 0;
 
-  // Full stat recalc from scratch (prestige bonuses preserved in state._*)
+  // Full stat recalc from scratch (Divine Blessing bonuses preserved in state._*)
   recalcStats();
 
   renderAllUpgrades();
   renderHUD();
 });
 
-// ─── Auto-income tick ─────────────────────────────────────────────────
+// ─── Passive income tick ─────────────────────────────────────────────
 function tick() {
   const now   = Date.now();
   const delta = (now - state.lastTick) / 1000;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clicker Game</title>
+  <title>Mythic Idle — Tales of the Ancients</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,25 +14,25 @@
       <div class="currency-display" id="coin-display">
         <span class="currency-icon">🪙</span>
         <div class="currency-info">
-          <span class="currency-label">Coins</span>
+          <span class="currency-label">Gold</span>
           <span class="currency-value" id="coin-count">0</span>
           <span class="currency-rate" id="coin-rate">+0/s</span>
         </div>
       </div>
       <div class="currency-display" id="gem-display">
-        <span class="currency-icon">💎</span>
+        <span class="currency-icon">🔮</span>
         <div class="currency-info">
-          <span class="currency-label">Gems</span>
+          <span class="currency-label">Mystic Runes</span>
           <span class="currency-value" id="gem-count">0</span>
-          <span class="currency-sub" id="gem-chance">Drop: 5%</span>
+          <span class="currency-sub" id="gem-chance">Manifest: 5%</span>
         </div>
       </div>
       <div class="currency-display" id="token-display">
-        <span class="currency-icon">⭐</span>
+        <span class="currency-icon">✨</span>
         <div class="currency-info">
-          <span class="currency-label">Prestige Tokens</span>
+          <span class="currency-label">Divine Favor</span>
           <span class="currency-value" id="token-count">0</span>
-          <span class="currency-sub" id="rebirth-status">Rebirth: locked</span>
+          <span class="currency-sub" id="rebirth-status">Ascension: locked</span>
         </div>
       </div>
     </header>
@@ -40,21 +40,23 @@
     <!-- Main game area -->
     <main id="game-area">
 
-      <!-- Click zone -->
+      <!-- Invoke zone -->
       <section id="click-zone">
+        <div id="game-title">Mythic Idle</div>
+
         <div id="total-clicks-wrap">
-          <span>Total Clicks: </span><span id="total-clicks">0</span>
-          <span id="rebirth-threshold-label"> / 1,000 for rebirth</span>
+          <span>Invocations: </span><span id="total-clicks">0</span>
+          <span id="rebirth-threshold-label"> / 10,000 for Ascension</span>
         </div>
 
-        <button id="main-btn" title="Click me!">
-          <span id="btn-inner">CLICK</span>
+        <button id="main-btn" title="Invoke the ancient powers!">
+          <span id="btn-inner">INVOKE</span>
         </button>
 
         <div id="click-stats">
-          <span>Coins per click: <b id="stat-cpc">1</b></span>
-          <span>Gem drop chance: <b id="stat-gdc">5%</b></span>
-          <span>Rebirths: <b id="stat-rebirths">0</b></span>
+          <span>Gold per invocation: <b id="stat-cpc">1</b></span>
+          <span>Rune manifest chance: <b id="stat-gdc">5%</b></span>
+          <span>Ascensions: <b id="stat-rebirths">0</b></span>
         </div>
 
         <!-- Floating text container -->
@@ -67,51 +69,51 @@
         <!-- Tab buttons -->
         <div id="tab-bar">
           <button class="tab-btn active" data-tab="coin-tab">
-            🪙 Coin Upgrades
+            ⚔️ Gold Rites
           </button>
           <button class="tab-btn" data-tab="gem-tab">
-            💎 Gem Upgrades
+            🔮 Runic Secrets
           </button>
           <button class="tab-btn" data-tab="prestige-tab">
-            ⭐ Prestige Upgrades
+            ✨ Divine Blessings
           </button>
         </div>
 
-        <!-- Coin Upgrades Tab -->
+        <!-- Gold Rites Tab -->
         <div class="tab-panel active" id="coin-tab">
           <div class="panel-header">
-            <h2>🪙 Coin Upgrades</h2>
-            <p class="panel-desc">Spend Coins to boost your earning power.</p>
+            <h2>⚔️ Gold Rites</h2>
+            <p class="panel-desc">Channel the power of mythic creatures to grow your Gold offerings.</p>
           </div>
           <div class="upgrade-list" id="coin-upgrade-list"></div>
         </div>
 
-        <!-- Gem Upgrades Tab -->
+        <!-- Runic Secrets Tab -->
         <div class="tab-panel" id="gem-tab">
           <div class="panel-header">
-            <h2>💎 Gem Upgrades</h2>
-            <p class="panel-desc">Spend Gems — earned by chance on each click.</p>
+            <h2>🔮 Runic Secrets</h2>
+            <p class="panel-desc">Spend Mystic Runes — ancient glyphs that manifest by chance when invoking.</p>
           </div>
           <div class="upgrade-list" id="gem-upgrade-list"></div>
         </div>
 
-        <!-- Prestige Upgrades Tab -->
+        <!-- Divine Blessings Tab -->
         <div class="tab-panel" id="prestige-tab">
           <div class="panel-header">
-            <h2>⭐ Prestige Upgrades</h2>
-            <p class="panel-desc">Spend Prestige Tokens earned through Rebirthing.</p>
+            <h2>✨ Divine Blessings</h2>
+            <p class="panel-desc">Spend Divine Favor — granted only through Ascension. Blessings endure forever.</p>
           </div>
           <div class="upgrade-list" id="prestige-upgrade-list"></div>
 
-          <!-- Rebirth button lives here -->
+          <!-- Ascension button lives here -->
           <div id="rebirth-section">
             <div id="rebirth-info">
-              <p>Rebirthing resets Coins, Gems, and purchased Coin/Gem upgrades.</p>
-              <p>You keep Prestige Tokens and Prestige Upgrades permanently.</p>
+              <p>Ascending resets your Gold, Mystic Runes, and Gold Rite / Runic Secret purchases.</p>
+              <p>Your Divine Favor and Divine Blessings are eternal — they survive every Ascension.</p>
               <p id="rebirth-reward-preview"></p>
             </div>
             <button id="rebirth-btn" disabled>
-              ♻️ Rebirth (need 10,000 total clicks)
+              🌅 Ascend (need 10,000 invocations)
             </button>
           </div>
         </div>
