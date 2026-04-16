@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clicker Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header / Currency Display -->
+    <header id="hud">
+      <div class="currency-display" id="coin-display">
+        <span class="currency-icon">🪙</span>
+        <div class="currency-info">
+          <span class="currency-label">Coins</span>
+          <span class="currency-value" id="coin-count">0</span>
+          <span class="currency-rate" id="coin-rate">+0/s</span>
+        </div>
+      </div>
+      <div class="currency-display" id="gem-display">
+        <span class="currency-icon">💎</span>
+        <div class="currency-info">
+          <span class="currency-label">Gems</span>
+          <span class="currency-value" id="gem-count">0</span>
+          <span class="currency-sub" id="gem-chance">Drop: 5%</span>
+        </div>
+      </div>
+      <div class="currency-display" id="token-display">
+        <span class="currency-icon">⭐</span>
+        <div class="currency-info">
+          <span class="currency-label">Prestige Tokens</span>
+          <span class="currency-value" id="token-count">0</span>
+          <span class="currency-sub" id="rebirth-status">Rebirth: locked</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main game area -->
+    <main id="game-area">
+
+      <!-- Click zone -->
+      <section id="click-zone">
+        <div id="total-clicks-wrap">
+          <span>Total Clicks: </span><span id="total-clicks">0</span>
+          <span id="rebirth-threshold-label"> / 1,000 for rebirth</span>
+        </div>
+
+        <button id="main-btn" title="Click me!">
+          <span id="btn-inner">CLICK</span>
+        </button>
+
+        <div id="click-stats">
+          <span>Coins per click: <b id="stat-cpc">1</b></span>
+          <span>Gem drop chance: <b id="stat-gdc">5%</b></span>
+          <span>Rebirths: <b id="stat-rebirths">0</b></span>
+        </div>
+
+        <!-- Floating text container -->
+        <div id="float-container"></div>
+      </section>
+
+      <!-- Upgrade panels -->
+      <section id="upgrade-area">
+
+        <!-- Tab buttons -->
+        <div id="tab-bar">
+          <button class="tab-btn active" data-tab="coin-tab">
+            🪙 Coin Upgrades
+          </button>
+          <button class="tab-btn" data-tab="gem-tab">
+            💎 Gem Upgrades
+          </button>
+          <button class="tab-btn" data-tab="prestige-tab">
+            ⭐ Prestige Upgrades
+          </button>
+        </div>
+
+        <!-- Coin Upgrades Tab -->
+        <div class="tab-panel active" id="coin-tab">
+          <div class="panel-header">
+            <h2>🪙 Coin Upgrades</h2>
+            <p class="panel-desc">Spend Coins to boost your earning power.</p>
+          </div>
+          <div class="upgrade-list" id="coin-upgrade-list"></div>
+        </div>
+
+        <!-- Gem Upgrades Tab -->
+        <div class="tab-panel" id="gem-tab">
+          <div class="panel-header">
+            <h2>💎 Gem Upgrades</h2>
+            <p class="panel-desc">Spend Gems — earned by chance on each click.</p>
+          </div>
+          <div class="upgrade-list" id="gem-upgrade-list"></div>
+        </div>
+
+        <!-- Prestige Upgrades Tab -->
+        <div class="tab-panel" id="prestige-tab">
+          <div class="panel-header">
+            <h2>⭐ Prestige Upgrades</h2>
+            <p class="panel-desc">Spend Prestige Tokens earned through Rebirthing.</p>
+          </div>
+          <div class="upgrade-list" id="prestige-upgrade-list"></div>
+
+          <!-- Rebirth button lives here -->
+          <div id="rebirth-section">
+            <div id="rebirth-info">
+              <p>Rebirthing resets Coins, Gems, and purchased Coin/Gem upgrades.</p>
+              <p>You keep Prestige Tokens and Prestige Upgrades permanently.</p>
+              <p id="rebirth-reward-preview"></p>
+            </div>
+            <button id="rebirth-btn" disabled>
+              ♻️ Rebirth (need 1,000 total clicks)
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
