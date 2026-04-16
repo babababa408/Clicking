@@ -25,7 +25,9 @@ const state = {
 };
 
 // ─── Rebirth threshold ──────────────────────────────────────────────
-const REBIRTH_CLICKS = 1000;
+// Base 10,000 clicks; each rebirth multiplies the requirement by 1.5.
+// Prestige upgrade "Eternal Grind" reduces the base before scaling.
+const REBIRTH_CLICKS = 10000;
 
 // ─── Upgrade Definitions ────────────────────────────────────────────
 // Each upgrade: { id, name, icon, desc, maxLevel, baseCost, costMult,
@@ -205,12 +207,12 @@ const PRESTIGE_UPGRADES = [
     id: 'eternal_grind',
     name: 'Eternal Grind',
     icon: '♾️',
-    desc: 'Reduce rebirth click requirement by 100.',
+    desc: 'Reduce the base rebirth click requirement by 1,000.',
     maxLevel: 8,
     baseCost: 2,
     costMult: 2.0,
     currency: 'tokens',
-    effect: (lvl) => { state._rebirthReduction = (state._rebirthReduction || 0) + 100; },
+    effect: (lvl) => { state._rebirthReduction = (state._rebirthReduction || 0) + 1000; },
   },
   {
     id: 'legacy_coins',
@@ -248,7 +250,9 @@ function fmt(n) {
 function pct(p) { return (p * 100).toFixed(1) + '%'; }
 
 function rebirthThreshold() {
-  return Math.max(100, REBIRTH_CLICKS - (state._rebirthReduction || 0));
+  const base    = Math.max(500, REBIRTH_CLICKS - (state._rebirthReduction || 0));
+  const scaling = Math.pow(1.5, state.rebirths);
+  return Math.floor(base * scaling);
 }
 
 // ─── Recalculate derived stats from scratch ───────────────────────────
