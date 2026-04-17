@@ -40,6 +40,7 @@ const COIN_UPGRADES = [
     id: 'stronger_click',
     name: "Yeti's Strength",
     icon: '❄️',
+    theme: 'yeti',
     desc: "Harness the Yeti's raw mountain might with every invocation. +2 Gold per invocation.",
     maxLevel: 50,
     baseCost: 10,
@@ -51,6 +52,7 @@ const COIN_UPGRADES = [
     id: 'coin_magnet',
     name: "Gremlin's Mischief",
     icon: '🔧',
+    theme: 'gremlin',
     desc: 'A Gremlin tinkers with your coffers in the dead of night. ×1.25 Gold per invocation.',
     maxLevel: 20,
     baseCost: 100,
@@ -62,6 +64,7 @@ const COIN_UPGRADES = [
     id: 'auto_clicker',
     name: "Poltergeist's Labor",
     icon: '👻',
+    theme: 'poltergeist',
     desc: 'An unseen Poltergeist rattles through your halls, working tirelessly. +1 Gold/s.',
     maxLevel: 30,
     baseCost: 50,
@@ -73,6 +76,7 @@ const COIN_UPGRADES = [
     id: 'coin_factory',
     name: "Kraken's Hoard",
     icon: '🦑',
+    theme: 'kraken',
     desc: 'The great Kraken guards sunken riches at the ocean floor without rest. +5 Gold/s.',
     maxLevel: 20,
     baseCost: 500,
@@ -84,6 +88,7 @@ const COIN_UPGRADES = [
     id: 'golden_fingers',
     name: "Sasquatch's Bounty",
     icon: '🦶',
+    theme: 'sasquatch',
     desc: 'The elusive Sasquatch returns from the deep wilderness laden with riches. +10 Gold/s and +5 Gold per invocation.',
     maxLevel: 15,
     baseCost: 2500,
@@ -95,6 +100,7 @@ const COIN_UPGRADES = [
     id: 'coin_surge',
     name: "Thunderbird's Wrath",
     icon: '⚡',
+    theme: 'thunderbird',
     desc: "The Thunderbird's storm strikes through every last coin in your hoard. All Gold income ×1.5.",
     maxLevel: 10,
     baseCost: 10000,
@@ -357,6 +363,7 @@ function renderUpgradeList(upgrades, containerId, cssClass, btnClass) {
     const card = document.createElement('div');
     card.className = `upgrade-card ${cssClass}` +
                      (maxed ? ' maxed' : canAfford ? ' affordable' : '');
+    if (u.theme) card.dataset.theme = u.theme;
 
     card.innerHTML = `
       <span class="upgrade-icon">${u.icon}</span>

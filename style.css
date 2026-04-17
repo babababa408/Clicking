@@ -755,6 +755,132 @@ html, body {
 }
 #rebirth-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* ══════════════════════════════════════════════════════════════════
+   GOLD RITES — per-creature card designs
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Yeti's Strength — frozen tundra ── */
+[data-theme="yeti"] {
+  background: linear-gradient(120deg, rgba(8,35,70,0.65) 0%, rgba(26,20,48,0.7) 65%);
+  border-color: rgba(129,212,250,0.3);
+  border-left-color: #81d4fa;
+}
+[data-theme="yeti"].affordable {
+  box-shadow: 0 0 14px rgba(129,212,250,0.18);
+  border-color: rgba(129,212,250,0.55);
+}
+[data-theme="yeti"] .upgrade-name { color: #b3e5fc; }
+[data-theme="yeti"] .upgrade-icon { animation: frostPulse 3.5s ease-in-out infinite; }
+
+@keyframes frostPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(129,212,250,0.5)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 12px rgba(129,212,250,1));  transform: scale(1.1); }
+}
+
+/* ── Gremlin's Mischief — toxic workshop ── */
+[data-theme="gremlin"] {
+  background: linear-gradient(120deg, rgba(8,45,18,0.65) 0%, rgba(26,20,48,0.7) 65%);
+  border-color: rgba(165,214,167,0.3);
+  border-left-color: #a5d6a7;
+}
+[data-theme="gremlin"].affordable {
+  box-shadow: 0 0 14px rgba(165,214,167,0.18);
+  border-color: rgba(165,214,167,0.55);
+}
+[data-theme="gremlin"] .upgrade-name { color: #c8e6c9; }
+[data-theme="gremlin"] .upgrade-icon { animation: gremlinTinker 2.2s ease-in-out infinite; }
+
+@keyframes gremlinTinker {
+  0%, 100% { transform: rotate(0deg);   filter: drop-shadow(0 0 4px rgba(165,214,167,0.5)); }
+  25%       { transform: rotate(-12deg); }
+  75%       { transform: rotate(12deg);  filter: drop-shadow(0 0 10px rgba(165,214,167,0.9)); }
+}
+
+/* ── Poltergeist's Labor — spectral flicker ── */
+[data-theme="poltergeist"] {
+  background: linear-gradient(120deg, rgba(30,30,45,0.55) 0%, rgba(26,20,48,0.65) 65%);
+  border-color: rgba(176,190,197,0.25);
+  border-left-color: #b0bec5;
+  animation: ghostFlicker 6s ease-in-out infinite;
+}
+[data-theme="poltergeist"].affordable {
+  box-shadow: 0 0 14px rgba(176,190,197,0.15);
+  border-color: rgba(176,190,197,0.45);
+}
+[data-theme="poltergeist"] .upgrade-name { color: #eceff1; }
+[data-theme="poltergeist"] .upgrade-icon { animation: ghostFloat 3s ease-in-out infinite; }
+
+@keyframes ghostFlicker {
+  0%, 87%, 91%, 95%, 100% { opacity: 1; }
+  89%  { opacity: 0.55; }
+  93%  { opacity: 0.75; }
+}
+@keyframes ghostFloat {
+  0%, 100% { transform: translateY(0);   filter: drop-shadow(0 0 5px rgba(200,220,235,0.5)); }
+  50%       { transform: translateY(-5px); filter: drop-shadow(0 0 13px rgba(200,220,235,0.9)); }
+}
+
+/* ── Kraken's Hoard — abyssal deep ── */
+[data-theme="kraken"] {
+  background: linear-gradient(120deg, rgba(4,16,55,0.7) 0%, rgba(26,20,48,0.7) 65%);
+  border-color: rgba(21,101,192,0.35);
+  border-left-color: #1565c0;
+}
+[data-theme="kraken"].affordable {
+  box-shadow: 0 0 14px rgba(21,101,192,0.22);
+  border-color: rgba(21,101,192,0.6);
+}
+[data-theme="kraken"] .upgrade-name { color: #90caf9; }
+[data-theme="kraken"] .upgrade-icon { animation: krakenWave 2.8s ease-in-out infinite; }
+
+@keyframes krakenWave {
+  0%, 100% { transform: rotate(-8deg) scale(1);    filter: drop-shadow(0 0 5px rgba(21,101,192,0.6)); }
+  50%       { transform: rotate(8deg)  scale(1.12); filter: drop-shadow(0 0 14px rgba(21,101,192,1)); }
+}
+
+/* ── Sasquatch's Bounty — deep wilderness ── */
+[data-theme="sasquatch"] {
+  background: linear-gradient(120deg, rgba(38,22,10,0.65) 0%, rgba(26,20,48,0.7) 65%);
+  border-color: rgba(141,110,99,0.3);
+  border-left-color: #8d6e63;
+}
+[data-theme="sasquatch"].affordable {
+  box-shadow: 0 0 14px rgba(141,110,99,0.18);
+  border-color: rgba(141,110,99,0.55);
+}
+[data-theme="sasquatch"] .upgrade-name { color: #d7ccc8; }
+[data-theme="sasquatch"] .upgrade-icon { animation: sasquatchThud 2.4s ease-in-out infinite; }
+
+@keyframes sasquatchThud {
+  0%, 100% { transform: translateY(0) scale(1);    filter: drop-shadow(0 0 3px rgba(141,110,99,0.4)); }
+  40%       { transform: translateY(-6px) scale(1.08); }
+  58%       { transform: translateY(1px) scale(0.96); filter: drop-shadow(0 0 9px rgba(141,110,99,0.8)); }
+}
+
+/* ── Thunderbird's Wrath — electric storm ── */
+[data-theme="thunderbird"] {
+  background: linear-gradient(120deg, rgba(55,38,0,0.65) 0%, rgba(26,20,48,0.7) 65%);
+  border-color: rgba(255,213,79,0.3);
+  border-left-color: #ffd54f;
+  animation: thunderBorder 3.5s ease-in-out infinite;
+}
+[data-theme="thunderbird"].affordable {
+  border-color: rgba(255,213,79,0.6);
+}
+[data-theme="thunderbird"] .upgrade-name { color: #fff9c4; }
+[data-theme="thunderbird"] .upgrade-icon { animation: boltZap 1.6s ease-in-out infinite; }
+
+@keyframes thunderBorder {
+  0%, 82%, 86%, 90%, 100% { box-shadow: 0 0 6px rgba(255,213,79,0.1); }
+  84%  { box-shadow: 0 0 22px rgba(255,213,79,0.55), 0 0 44px rgba(255,213,79,0.2); }
+  88%  { box-shadow: 0 0 10px rgba(255,213,79,0.25); }
+}
+@keyframes boltZap {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 4px rgba(255,213,79,0.5)); }
+  15%       { transform: scale(1.25); filter: drop-shadow(0 0 18px rgba(255,213,79,1)); }
+  30%       { transform: scale(0.95); filter: drop-shadow(0 0 6px rgba(255,213,79,0.6)); }
+}
+
 /* ─── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 700px) {
   #game-area { flex-direction: column; }
